@@ -1,0 +1,39 @@
+name: GitHub Actions Testing
+
+on:
+  push:
+    branches: [main, dev/*, create-github-actions]
+  pull_request:
+    branches: [master, dev/*, create-github-actions]
+
+jobs:
+  angular-test-and-build:
+    name: Angular Test And Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./front
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./front/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test:ci
+      - name: Generate Angular Coverage
+        run: npm run coverage:ci
+      - name: Upload Angular Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-node-${{ matrix.node-version }}
+          path: ./front/coverage/lcov-report
