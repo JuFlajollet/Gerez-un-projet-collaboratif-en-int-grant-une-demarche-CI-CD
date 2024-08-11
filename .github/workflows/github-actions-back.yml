@@ -15,7 +15,7 @@ jobs:
         working-directory: ./back
     strategy:
       matrix:
-        java-version: [ 17, 21 ]
+        java-version: [ 21 ]
         # See supported Java release schedule at https://www.oracle.com/java/technologies/java-se-support-roadmap.html
     steps:
       - name: Checkout the source code
