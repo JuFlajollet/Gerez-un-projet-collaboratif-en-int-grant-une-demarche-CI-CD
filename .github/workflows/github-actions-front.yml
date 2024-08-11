@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, dev/*, create-github-actions]
   pull_request:
-    branches: [master, dev/*, create-github-actions]
+    branches: [main, dev/*, create-github-actions]
 
 jobs:
   angular-test-and-build:
