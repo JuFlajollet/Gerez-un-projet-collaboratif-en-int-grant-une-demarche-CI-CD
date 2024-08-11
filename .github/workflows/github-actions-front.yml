@@ -1,4 +1,4 @@
-name: GitHub Actions Testing
+name: GitHub Actions For Front
 
 on:
   push:
