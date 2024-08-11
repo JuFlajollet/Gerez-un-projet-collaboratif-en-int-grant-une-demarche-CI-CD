@@ -1,0 +1,38 @@
+name: GitHub Actions For Back
+
+on:
+  push:
+    branches: [main, dev/*, create-github-actions]
+  pull_request:
+    branches: [main, dev/*, create-github-actions]
+
+jobs:
+  java-test-and-build:
+    name: Java Test And Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./back
+    strategy:
+      matrix:
+        java-version: [ 17, 21 ]
+        # See supported Java release schedule at https://www.oracle.com/java/technologies/java-se-support-roadmap.html
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+      - name: Use Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: "adopt"
+      - name: Build App with Maven
+        run: mvn clean compile
+      - name: Run Tests with Maven & Generate Jacoco Coverage
+        run: mvn test
+      - name: Upload Jacoco Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage
+          path: ./back/target/site/jacoco
+      - name: Package App with Maven
+        run: mvn package -DSkipTests
