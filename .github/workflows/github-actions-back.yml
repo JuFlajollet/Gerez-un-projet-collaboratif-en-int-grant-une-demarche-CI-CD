@@ -71,4 +71,4 @@ jobs:
           file: ./back/Dockerfile
           context: ./back
           push: true
-          tags: ${{ env.DOCKER_USERNAME }}/app:latest
+          tags: ${{ env.DOCKER_USERNAME }}/app-back:latest
