@@ -71,5 +71,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
         with:
+          context: .
+          file: ./front/Dockerfile
           push: true
           tags: user/app:latest
