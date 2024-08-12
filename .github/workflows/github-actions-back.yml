@@ -36,3 +36,20 @@ jobs:
           path: ./back/target/site/jacoco
       - name: Package App with Maven
         run: mvn package -DSkipTests
+      - name: Sonar Scan Back
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./back
+          args: >
+            -Dsonar.organization=juflajollet
+            -Dsonar.projectKey=JuFlajollet_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+            -Dsonar.sources=src/main/java
+            -Dsonar.tests=src/test/java
+            -Dsonar.java.binaries=target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.coverage.exclusions=target/**,src/test/*
+            -Dsonar.exclusions=target/**
+            -Dsonar.verbose=true
