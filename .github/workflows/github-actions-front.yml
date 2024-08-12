@@ -77,4 +77,4 @@ jobs:
           file: ./front/Dockerfile
           context: ./front
           push: true
-          tags: $DOCKER_USERNAME/app:latest
+          tags: ${{ env.DOCKER_USERNAME }}/app:latest
