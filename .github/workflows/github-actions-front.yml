@@ -68,10 +68,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         if: matrix.node-version == '22.x' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
         with:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           file: ./front/Dockerfile
           context: ./front
           push: true
