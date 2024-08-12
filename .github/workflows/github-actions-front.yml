@@ -48,7 +48,7 @@ jobs:
         with:
           projectBaseDir: ./front
           args: >
-            -Dsonar.organization=jflajollet
+            -Dsonar.organization=juflajollet
             -Dsonar.projectKey=JuFlajollet_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.sources=src
             -Dsonar.tests=src
