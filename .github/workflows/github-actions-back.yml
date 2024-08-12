@@ -2,9 +2,9 @@ name: GitHub Actions For Back
 
 on:
   push:
-    branches: [main, dev/*, create-github-actions]
+    branches: [main, develop, create-github-actions]
   pull_request:
-    branches: [main, dev/*, create-github-actions]
+    branches: [main, develop, create-github-actions]
 
 jobs:
   java-test-and-build:
