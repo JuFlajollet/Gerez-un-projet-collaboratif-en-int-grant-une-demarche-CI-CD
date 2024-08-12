@@ -66,9 +66,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
         with:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
           file: ./back/Dockerfile
           context: ./back
           push: true
-          tags: DOCKER_USERNAME/app:latest
+          tags: username/app:latest
