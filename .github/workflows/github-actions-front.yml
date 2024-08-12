@@ -1,0 +1,75 @@
+name: GitHub Actions For Front
+
+on:
+  push:
+    branches: [main, develop, create-github-actions]
+  pull_request:
+    branches: [main, develop, create-github-actions]
+
+jobs:
+  angular-test-and-build:
+    name: Angular Test And Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./front
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./front/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test:ci
+      - name: Generate Angular Coverage
+        run: npm run coverage:ci
+      - name: Upload Angular Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-node-${{ matrix.node-version }}
+          path: ./front/coverage/bobapp/lcov-report
+      - name: Build Angular Front
+        run: npm run build --prod
+      - name: Sonar Scan front
+        if: ${{ matrix.node-version == '22.x' }}
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./front
+          args: >
+            -Dsonar.organization=juflajollet
+            -Dsonar.projectKey=JuFlajollet_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.inclusions=**/*.ts,**/*.scss,**/*.html
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.coverage.exclusions=.angular/**,node_modules/**,coverage/**,src/environments/**,**/*.spec.ts,**/*.conf.js,src/test.ts,src/main.ts
+            -Dsonar.exclusions=.angular/**,node_modules/**,coverage/**
+            -Dsonar.verbose=true
+      - name: Set up QEMU for Docker
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: user/app:latest
