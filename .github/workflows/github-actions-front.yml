@@ -71,7 +71,7 @@ jobs:
         if: matrix.node-version == '22.x' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
         with:
-          context: .
           file: ./front/Dockerfile
+          context: ./front
           push: true
           tags: user/app:latest
